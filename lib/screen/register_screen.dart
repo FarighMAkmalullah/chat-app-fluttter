@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:chat_application/service/auth/auth_service.dart';
 import 'package:chat_application/widget/my_button_widget.dart';
 import 'package:chat_application/widget/my_textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,30 @@ class RegisterScreen extends StatelessWidget {
   });
 
   //login method
-  void register() {}
+  void register(BuildContext context) {
+    final authService = AuthService();
+    if (_passwordController.text == _confirmPasswordController.text) {
+      try {
+        authService.signUpWithEmailPassword(
+            _emailController.text, _passwordController.text);
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(e.toString()),
+          ),
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+          title: Text("Konfirmasi Password Tidak Sama"),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +93,7 @@ class RegisterScreen extends StatelessWidget {
           //Login Button
           MyButtonWidget(
             text: 'Register',
-            onTap: register,
+            onTap: () => register(context),
           ),
           const SizedBox(
             height: 25,

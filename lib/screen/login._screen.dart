@@ -1,19 +1,46 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:chat_application/service/auth/auth_service.dart';
 import 'package:chat_application/widget/my_button_widget.dart';
 import 'package:chat_application/widget/my_textfield_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class LoginScreen extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class LoginScreen extends StatefulWidget {
   void Function()? onTap;
   LoginScreen({
     super.key,
     required this.onTap,
   });
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+
   //login method
-  void login() {}
+  void login() async {
+    // getAuth Service
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    try {
+      await authService.signInWithEmailandPassword(
+          _emailController.text, _passwordController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +101,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: onTap,
+                onTap: widget.onTap,
                 child: Text(
                   'Register Sekarang',
                   style: TextStyle(
